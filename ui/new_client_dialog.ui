@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NewClientDialog</class>
+
+ <widget class="QDialog" name="NewClientDialog">
+  <property name="windowTitle">
+   <string>Novi klijent</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <property name="minimumWidth">
+   <number>400</number>
+  </property>
+
+  <layout class="QVBoxLayout" name="mainLayout">
+
+   <!-- Podaci o klijentu -->
+   <item>
+    <widget class="QGroupBox" name="clientDataGroupBox">
+     <property name="title">
+      <string>Podaci o klijentu</string>
+     </property>
+
+     <layout class="QFormLayout" name="formLayout">
+
+      <!-- Naziv -->
+      <item row="0" column="0">
+       <widget class="QLabel" name="nameLabel">
+        <property name="text">
+         <string>Naziv *</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="nameLineEdit"/>
+      </item>
+
+      <!-- OIB -->
+      <item row="1" column="0">
+       <widget class="QLabel" name="oibLabel">
+        <property name="text">
+         <string>OIB *</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="oibLineEdit">
+        <property name="maxLength">
+         <number>11</number>
+        </property>
+       </widget>
+      </item>
+
+      <!-- Adresa -->
+      <item row="2" column="0">
+       <widget class="QLabel" name="addressLabel">
+        <property name="text">
+         <string>Adresa</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="addressLineEdit"/>
+      </item>
+
+      <!-- Telefon -->
+      <item row="3" column="0">
+       <widget class="QLabel" name="phoneLabel">
+        <property name="text">
+         <string>Telefon</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="phoneLineEdit"/>
+      </item>
+
+      <!-- Email -->
+      <item row="4" column="0">
+       <widget class="QLabel" name="emailLabel">
+        <property name="text">
+         <string>Email</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="emailLineEdit"/>
+      </item>
+
+     </layout>
+    </widget>
+   </item>
+
+   <!-- Gumbi -->
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </spacer>
+     </item>
+
+     <item>
+      <widget class="QPushButton" name="saveButton">
+       <property name="text">
+        <string>Spremi</string>
+       </property>
+      </widget>
+     </item>
+
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Odustani</string>
+       </property>
+      </widget>
+     </item>
+
+    </layout>
+   </item>
+
+  </layout>
+ </widget>
+
+ <resources/>
+ <connections/>
+</ui>

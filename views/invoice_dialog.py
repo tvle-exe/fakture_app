@@ -1,8 +1,11 @@
 import os
-from PySide6.QtWidgets import QPushButton, QComboBox, QLineEdit
+from PySide6.QtWidgets import QPushButton, QComboBox, QLineEdit, QDateEdit
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import QFile
+from PySide6.QtCore import QFile, QDate
 from PySide6.QtWidgets import QHeaderView, QTableWidget
+from .new_client_dialog import NewClientDialog
+
+
 
 
 
@@ -21,6 +24,11 @@ class InvoiceDialog:
 
         self._dialog = loader.load(file)
 
+        # postavi današnji datum
+        self.dateEdit = self._dialog.findChild(QDateEdit, "dateEdit")
+        self.dateEdit.setDate(QDate.currentDate())
+
+
         self.tableWidget = self._dialog.findChild(QTableWidget, "itemsTableWidget")
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
@@ -32,6 +40,8 @@ class InvoiceDialog:
         self.closeButton = self._dialog.findChild(QPushButton, "closeButton")
 
         self.clientComboBox = self._dialog.findChild(QComboBox, "clientComboBox")
+        self.addClientButton = self._dialog.findChild(QPushButton, "addClientButton")
+        self.addClientButton.clicked.connect(self.open_new_client_dialog)
         self.descriptionLineEdit = self._dialog.findChild(QLineEdit, "descriptionLineEdit")
 
     def open(self):
@@ -39,3 +49,11 @@ class InvoiceDialog:
 
     def close(self):
         self._dialog.close()
+
+    def open_new_client_dialog(self):
+        dialog = NewClientDialog(parent=self._dialog)
+        result = dialog.open()
+
+        if result:
+            print("Novi klijent spremljen (TODO: refresh ComboBox)")
+
