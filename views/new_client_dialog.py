@@ -1,44 +1,55 @@
 import os
+from PySide6.QtWidgets import QDialog, QPushButton, QLineEdit, QVBoxLayout
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
-from PySide6.QtWidgets import QDialog, QPushButton, QLineEdit
 
+class NewClientDialog(QDialog):
+    def __init__(self, client=None, parent=None):
+        super().__init__(parent)
 
-class NewClientDialog:
-    def __init__(self, parent=None):
+        # --- učitaj UI ---
         loader = QUiLoader()
-
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        ui_path = os.path.normpath(
-            os.path.join(base_dir, "..", "ui", "new_client_dialog.ui")
-        )
+        ui_path = os.path.join("ui", "new_client_dialog.ui")
 
         file = QFile(ui_path)
-        if not file.open(QFile.ReadOnly):
-            raise RuntimeError(f"Ne mogu otvoriti UI file: {ui_path}")
-
-        self._dialog: QDialog = loader.load(file, parent)
+        file.open(QFile.ReadOnly)
+        self.content = loader.load(file)
         file.close()
 
-        # polja
-        self.nameLineEdit = self._dialog.findChild(QLineEdit, "nameLineEdit")
-        self.oibLineEdit = self._dialog.findChild(QLineEdit, "oibLineEdit")
-        self.addressLineEdit = self._dialog.findChild(QLineEdit, "addressLineEdit")
-        self.phoneLineEdit = self._dialog.findChild(QLineEdit, "phoneLineEdit")
-        self.emailLineEdit = self._dialog.findChild(QLineEdit, "emailLineEdit")
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.content)
+        self.setLayout(layout)
 
-        # gumbi
-        self.saveButton = self._dialog.findChild(QPushButton, "saveButton")
-        self.cancelButton = self._dialog.findChild(QPushButton, "cancelButton")
+        # --- pronađi widgete ---
+        self.nameEdit = self.content.findChild(QLineEdit, "nameLineEdit")
+        self.oibEdit = self.content.findChild(QLineEdit, "oibLineEdit")
+        self.addressEdit = self.content.findChild(QLineEdit, "addressLineEdit")
+        self.phoneEdit = self.content.findChild(QLineEdit, "phoneLineEdit")
+        self.emailEdit = self.content.findChild(QLineEdit, "emailLineEdit")
 
-        # view smije samo zatvoriti dialog, bez poslovne logike
-        self.cancelButton.clicked.connect(self._dialog.reject)
+        self.saveButton = self.content.findChild(QPushButton, "saveButton")
+        self.cancelButton = self.content.findChild(QPushButton, "cancelButton")
 
-    def open(self):
-        return self._dialog.exec()
+        self.saveButton.clicked.connect(self.accept)
+        self.cancelButton.clicked.connect(self.reject)
 
-    def accept(self):
-        self._dialog.accept()
+        # --- edit mode ---
+        if client:
+            self.nameEdit.setText(client["name"])
+            self.oibEdit.setText(client["oib"])
+            self.addressEdit.setText(client.get("address", ""))
+            self.phoneEdit.setText(client.get("phone", ""))
+            self.emailEdit.setText(client.get("email", ""))
 
-    def reject(self):
-        self._dialog.reject()
+        # --- fullscreen i resizable ---
+        self.showMaximized()  # odmah full screen
+        self.setMinimumSize(900, 700)  # sprječava da korisnik napravi prozor premali
+
+    def get_data(self):
+        return {
+            "name": self.nameEdit.text(),
+            "oib": self.oibEdit.text(),
+            "address": self.addressEdit.text() or None,
+            "phone": self.phoneEdit.text() or None,
+            "email": self.emailEdit.text() or None,
+        }

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Fakture App</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -30,6 +30,7 @@
       </property>
      </widget>
     </item>
+
     <item>
      <widget class="QPushButton" name="novaFakturaButton">
       <property name="font">
@@ -42,6 +43,33 @@
       </property>
      </widget>
     </item>
+
+     <item>
+     <widget class="QPushButton" name="povijestFakturaButton">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Povijest faktura</string>
+      </property>
+     </widget>
+    </item>
+    
+    <item>
+     <widget class="QPushButton" name="clientsButton">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Klijenti</string>
+      </property>
+     </widget>
+    </item>
+
     <item>
      <widget class="QPushButton" name="exitButton">
       <property name="font">
@@ -54,18 +82,11 @@
       </property>
      </widget>
     </item>
+
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>33</height>
-    </rect>
-   </property>
-  </widget>
+
+  <widget class="QMenuBar" name="menubar"/>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>

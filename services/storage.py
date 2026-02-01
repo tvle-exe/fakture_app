@@ -1,19 +1,16 @@
 import json
-import os
+from pathlib import Path
 
-FILE_PATH = "data/invoices.json"
+INVOICES_FILE = Path("data/invoices.json")
 
-
-def save_invoice(invoice):
-    os.makedirs("data", exist_ok=True)
-
-    if os.path.exists(FILE_PATH):
-        with open(FILE_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
+def save_invoice(invoice_data: dict):
+    if INVOICES_FILE.exists():
+        with open(INVOICES_FILE, "r", encoding="utf-8") as f:
+            invoices = json.load(f)
     else:
-        data = []
+        invoices = []
 
-    data.append(invoice)
+    invoices.append(invoice_data)
 
-    with open(FILE_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    with open(INVOICES_FILE, "w", encoding="utf-8") as f:
+        json.dump(invoices, f, indent=2, ensure_ascii=False)

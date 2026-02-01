@@ -1,0 +1,45 @@
+[
+    {
+        "invoice_number": "125",
+        "client": "jedan",
+        "description": "qqqqqq",
+        "date": "2026-02-01",
+        "items": [
+            {
+                "description": "pe",
+                "quantity": 3.0,
+                "unit": "kom",
+                "price": 4.0,
+                "total": 8.0
+            },
+            {
+                "description": "nis",
+                "quantity": 3.0,
+                "unit": "kom",
+                "price": 5.0,
+                "total": 15.0
+            }
+        ],
+        "subtotal": 23.0,
+        "pdv_included": true,
+        "total_with_vat": 28.75
+    },
+    {
+        "invoice_number": "1",
+        "client": "xxxx",
+        "description": "asd",
+        "date": "2026-02-01",
+        "items": [
+            {
+                "description": "xxx",
+                "quantity": 4.0,
+                "unit": "kom",
+                "price": 5.0,
+                "total": 20.0
+            }
+        ],
+        "subtotal": 20.0,
+        "pdv_included": true,
+        "total_with_vat": 25.0
+    }
+]
