@@ -1,3 +1,5 @@
 PySide6
 reportlab
 pyinstaller --onefile --windowed --name Fakture --add-data "assets;assets" --add-data "ui;ui" app.py
+
+
