@@ -1,22 +1,32 @@
 from views.base_window import BaseWindow
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
+from utils.resource_path import resource_path
 
 
 class MainWindow(BaseWindow):
     def __init__(self):
-        super().__init__(resizable=True)  # resizable, veličina 900x700 po defaultu
+        super().__init__(resizable=True)
 
-        # Učitaj .ui file
         loader = QUiLoader()
-        ui_file = QFile("ui/main_window.ui")
-        ui_file.open(QFile.ReadOnly)
-        self.ui = loader.load(ui_file)
+        ui_path = resource_path("ui/main_window.ui")
+        ui_file = QFile(ui_path)
+
+        if not ui_file.open(QFile.ReadOnly):
+            raise RuntimeError(f"Ne mogu otvoriti UI file: {ui_path}")
+
+        ui = loader.load(ui_file)
         ui_file.close()
 
-        # Postavi centralni widget
-        self.setCentralWidget(self.ui)
-        self.setWindowTitle("Fakture App")
+   
+        self.setCentralWidget(ui.centralWidget())
 
-        # Otvori fullscreen
+        # ako postoje
+        if ui.menuBar():
+            self.setMenuBar(ui.menuBar())
+        if ui.statusBar():
+            self.setStatusBar(ui.statusBar())
+
+        self.ui = ui
+        self.setWindowTitle("Fakture App")
         self.show_fullscreen()

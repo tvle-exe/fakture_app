@@ -54,7 +54,7 @@ class ClientsController:
             return
 
         reply = QMessageBox.question(
-            self.dialog,
+            self.dialog.dialog,
             "Potvrda",
             "Sigurno želiš obrisati klijenta?",
             QMessageBox.Yes | QMessageBox.No

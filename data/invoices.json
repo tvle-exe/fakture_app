@@ -1,45 +1,106 @@
 [
-    {
-        "invoice_number": "125",
-        "client": "jedan",
-        "description": "qqqqqq",
-        "date": "2026-02-01",
-        "items": [
-            {
-                "description": "pe",
-                "quantity": 3.0,
-                "unit": "kom",
-                "price": 4.0,
-                "total": 8.0
-            },
-            {
-                "description": "nis",
-                "quantity": 3.0,
-                "unit": "kom",
-                "price": 5.0,
-                "total": 15.0
-            }
-        ],
-        "subtotal": 23.0,
-        "pdv_included": true,
-        "total_with_vat": 28.75
-    },
-    {
-        "invoice_number": "1",
-        "client": "xxxx",
+  {
+    "invoice_number": "125",
+    "client": "jedan",
+    "description": "qqqqqq",
+    "date": "2026-02-01",
+    "items": [
+      {
+        "description": "pe",
+        "quantity": 3.0,
+        "unit": "kom",
+        "price": 4.0,
+        "total": 8.0
+      },
+      {
+        "description": "nis",
+        "quantity": 3.0,
+        "unit": "kom",
+        "price": 5.0,
+        "total": 15.0
+      }
+    ],
+    "subtotal": 23.0,
+    "pdv_included": true,
+    "total_with_vat": 28.75
+  },
+  {
+    "invoice_number": "1",
+    "client": "xxxx",
+    "description": "asd",
+    "date": "2026-02-01",
+    "items": [
+      {
+        "description": "xxx",
+        "quantity": 4.0,
+        "unit": "kom",
+        "price": 5.0,
+        "total": 20.0
+      }
+    ],
+    "subtotal": 20.0,
+    "pdv_included": true,
+    "total_with_vat": 25.0
+  },
+  {
+    "invoice_number": "43",
+    "client": "jedan",
+    "description": "qqqqq",
+    "date": "2026-02-02",
+    "items": [
+      {
+        "description": "gg",
+        "quantity": 2.0,
+        "unit": "kom",
+        "price": 5.0,
+        "total": 10.0
+      }
+    ],
+    "subtotal": 10.0,
+    "pdv_included": true,
+    "total_with_vat": 12.5
+  },
+  {
+    "invoice_number": "32",
+    "client": "xxxx",
+    "description": "qqqq",
+    "date": "2026-02-02",
+    "items": [
+      {
+        "description": "5",
+        "quantity": 2.0,
+        "unit": "kom",
+        "price": 13.0,
+        "total": 26.0
+      },
+      {
         "description": "asd",
-        "date": "2026-02-01",
-        "items": [
-            {
-                "description": "xxx",
-                "quantity": 4.0,
-                "unit": "kom",
-                "price": 5.0,
-                "total": 20.0
-            }
-        ],
-        "subtotal": 20.0,
-        "pdv_included": true,
-        "total_with_vat": 25.0
-    }
+        "quantity": 4.0,
+        "unit": "kom",
+        "price": 6.0,
+        "total": 24.0
+      }
+    ],
+    "subtotal": 50.0,
+    "pdv_included": true,
+    "total_with_vat": 62.5
+  },
+  {
+    "invoice_number": "67",
+    "client": "jedan",
+    "description": "tttttttttttt",
+    "date": "2026-02-02",
+    "items": [
+      {
+        "description": "aaaassssssss",
+        "quantity": 4.0,
+        "unit": "kom",
+        "price": 7.0,
+        "total": 28.0
+      }
+    ],
+    "subtotal": 28.0,
+    "pdv_included": true,
+    "total_with_vat": 35.0
+  }
 ]

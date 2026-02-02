@@ -3,18 +3,27 @@ from views.history_window import HistoryWindow
 from PySide6.QtCore import QDate
 import json
 import os
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
-from reportlab.lib import colors
+import sys
+from utils.pdf_utils import export_invoice_pdf
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# ================= ROOT FOLDER APLIKACIJE =================
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+# putanje za JSON i PDF
+DATA_DIR = os.path.join(BASE_DIR, "data")
+PDF_DIR = os.path.join(BASE_DIR, "pdf")
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(PDF_DIR, exist_ok=True)
+
+INVOICES_JSON_PATH = os.path.join(DATA_DIR, "invoices.json")
 
 class HistoryController:
     def __init__(self):
         self.window = HistoryWindow()
-        self.invoices_file = "data/invoices.json"
+        self.invoices_file = INVOICES_JSON_PATH  # JSON u root/data
 
         # Pronađi sve widgete
         ui = self.window.ui
@@ -105,7 +114,6 @@ class HistoryController:
 
     def save_invoice(self):
         """Spremi fakturu kao novu, bez mijenjanja postojećih faktura"""
-        # Pripremi stavke
         items = []
         for r in range(self.itemsTableWidget.rowCount()):
             items.append({
@@ -116,7 +124,6 @@ class HistoryController:
                 "total": float(self.itemsTableWidget.item(r, 4).text() or 0)
             })
 
-        # Napravi novu fakturu
         invoice = {
             "invoice_number": self.invoiceNumberLineEdit.text(),
             "client": self.clientLineEdit.text(),
@@ -128,17 +135,14 @@ class HistoryController:
             "total_with_vat": round(sum([i["total"] for i in items]) * 1.25 if self.pdvCheckBox.isChecked() else sum([i["total"] for i in items]), 2)
         }
 
-        # Dodaj novu fakturu u listu
         self.invoices.append(invoice)
 
-        # Spremi u JSON
+        # spremi u JSON u root/data
         with open(self.invoices_file, "w", encoding="utf-8") as f:
             json.dump(self.invoices, f, indent=4, ensure_ascii=False)
 
-        # Osvježi prikaz tablice
         self.load_invoices()
         QMessageBox.information(self.window, "Uspjeh", "Faktura je spremljena kao nova")
-
 
     def delete_invoice(self):
         selected = self.invoicesTable.selectedItems()
@@ -177,70 +181,11 @@ class HistoryController:
         invoice = self.invoices[row]
 
         try:
-            self.export_pdf(invoice)
+            # export u PDF u root/pdf
+            export_invoice_pdf(invoice)
             QMessageBox.information(self.window, "Uspjeh", f"Faktura {invoice['invoice_number']} je exportana u PDF")
         except Exception as e:
             QMessageBox.critical(self.window, "Greška", f"Greška pri exportu PDF: {str(e)}")
-
-    def export_pdf(self, invoice):
-        os.makedirs(os.path.join(BASE_DIR, "..", "pdf"), exist_ok=True)
-        filename = os.path.normpath(os.path.join(BASE_DIR, "..", f"pdf/faktura_{invoice['invoice_number']}.pdf"))
-        width, height = A4
-
-        font_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets", "fonts", "DejaVuSans.ttf"))
-        pdfmetrics.registerFont(TTFont('DejaVu', font_path))
-
-        c = canvas.Canvas(filename, pagesize=A4)
-        y = height - 50
-
-        c.setFont("DejaVu", 18)
-        c.drawString(50, y, "Faktura")
-
-        y -= 30
-        c.setFont("DejaVu", 12)
-        c.drawString(50, y, f"Broj fakture: {invoice['invoice_number']}")
-
-        y -= 20
-        c.setFont("DejaVu", 11)
-        c.drawString(50, y, f"Klijent: {invoice['client']}")
-        y -= 20
-        c.drawString(50, y, f"Opis: {invoice['description']}")
-        y -= 20
-        c.drawString(50, y, f"Datum: {invoice['date']}")
-        y -= 40
-
-        c.setFont("DejaVu", 11)
-        c.drawString(50, y, "Opis")
-        c.drawCentredString(350, y, "Količina")
-        c.drawRightString(450, y, "Cijena")
-        c.drawRightString(530, y, "Iznos")
-        y -= 15
-        c.setStrokeColor(colors.black)
-        c.line(50, y, 530, y)
-        y -= 20
-
-        for item in invoice["items"]:
-            c.drawString(50, y, item["description"])
-            qty_with_unit = f"{item['quantity']} {item['unit']}"
-            c.drawCentredString(350, y, qty_with_unit)
-            c.drawRightString(450, y, f"{item['price']:.2f}")
-            c.drawRightString(530, y, f"{item['total']:.2f}")
-            y -= 20
-            if y < 50:
-                c.showPage()
-                y = height - 50
-
-        subtotal = sum(item["total"] for item in invoice["items"])
-        c.setFont("DejaVu", 12)
-        y -= 20
-        c.drawRightString(530, y, f"UKUPNO bez PDV-a: {subtotal:.2f} EUR")
-
-        if invoice.get("pdv_included"):
-            total_with_vat = invoice["total_with_vat"]
-            y -= 20
-            c.drawRightString(530, y, f"UKUPNO sa PDV-om 25%: {total_with_vat:.2f} EUR")
-
-        c.save()
 
     def open(self):
         self.window.show()

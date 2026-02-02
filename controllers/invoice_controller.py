@@ -1,21 +1,28 @@
 import os
+import sys
 import json
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib import colors
-
 from views.invoice_dialog import InvoiceDialog
+from utils.pdf_utils import export_invoice_pdf
 
-# ================= ABSOLUTNA PUTANJA DO JSON =================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-INVOICES_JSON_PATH = os.path.normpath(os.path.join(BASE_DIR, "..", "data", "invoices.json"))
+# ================= ROOT FOLDER APLIKACIJE =================
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+# putanje za JSON i PDF u root folderu
+DATA_DIR = os.path.join(BASE_DIR, "data")
+PDF_DIR = os.path.join(BASE_DIR, "pdf")
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(PDF_DIR, exist_ok=True)
+
+INVOICES_JSON_PATH = os.path.join(DATA_DIR, "invoices.json")
 
 
 class InvoiceController:
     def __init__(self):
         self.dialog = InvoiceDialog()
+        # povezivanje gumbića
         self.dialog.closeButton.clicked.connect(self.dialog.close)
         self.dialog.saveButton.clicked.connect(self.save_and_export)
 
@@ -23,10 +30,6 @@ class InvoiceController:
         self.dialog.open()
 
     def save_and_export(self):
-        """
-        Sprema fakturu u JSON i PDF.
-        Poziva se kad korisnik klikne 'Spremi'.
-        """
         invoice = self.dialog.collect_invoice_data()
         if not invoice["invoice_number"]:
             print("GREŠKA: broj fakture nije unesen!")
@@ -42,7 +45,6 @@ class InvoiceController:
                 except json.JSONDecodeError:
                     data = []
 
-        # Kreiraj kompletan zapis za JSON
         json_invoice = {
             "invoice_number": invoice["invoice_number"],
             "client": invoice["client"],
@@ -65,78 +67,13 @@ class InvoiceController:
 
         data.append(json_invoice)
 
+        # Spremi JSON u root/data
         with open(INVOICES_JSON_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
         print(f"Faktura #{invoice['invoice_number']} spremljena u JSON za klijenta: {invoice['client']}")
 
         # ================= PDF =================
-        self.export_pdf(invoice)
+        export_invoice_pdf(json_invoice)
 
         self.dialog.close()
-
-    def export_pdf(self, invoice):
-        os.makedirs(os.path.join(BASE_DIR, "..", "pdf"), exist_ok=True)
-        filename = os.path.normpath(os.path.join(BASE_DIR, "..", f"pdf/faktura_{invoice['invoice_number']}.pdf"))
-
-        width, height = A4
-
-        # Registriraj Unicode TTF font
-        font_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets", "fonts", "DejaVuSans.ttf"))
-        pdfmetrics.registerFont(TTFont('DejaVu', font_path))
-
-        c = canvas.Canvas(filename, pagesize=A4)
-        y = height - 50
-
-        # ================= HEADER =================
-        c.setFont("DejaVu", 18)
-        c.drawString(50, y, "Faktura")
-
-        y -= 30
-        c.setFont("DejaVu", 12)
-        c.drawString(50, y, f"Broj fakture: {invoice['invoice_number']}")
-
-        y -= 20
-        c.setFont("DejaVu", 11)
-        c.drawString(50, y, f"Klijent: {invoice['client']}")
-        y -= 20
-        c.drawString(50, y, f"Opis: {invoice['description']}")
-        y -= 20
-        c.drawString(50, y, f"Datum: {invoice['date']}")
-        y -= 40
-
-        # ================= TABLE HEADER =================
-        c.setFont("DejaVu", 11)
-        c.drawString(50, y, "Opis")
-        c.drawCentredString(350, y, "Količina")
-        c.drawRightString(450, y, "Cijena")
-        c.drawRightString(530, y, "Iznos")
-        y -= 15
-        c.setStrokeColor(colors.black)
-        c.line(50, y, 530, y)
-        y -= 20
-
-        # ================= ITEMS =================
-        for item in invoice["items"]:
-            c.drawString(50, y, item["description"])
-            qty_with_unit = f"{item['quantity']} {item['unit']}"
-            c.drawCentredString(350, y, qty_with_unit)
-            c.drawRightString(450, y, f"{item['price']:.2f}")
-            c.drawRightString(530, y, f"{item['total']:.2f}")
-            y -= 20
-            if y < 50:
-                c.showPage()
-                y = height - 50
-
-        # ================= TOTALS =================
-        subtotal = sum(item["total"] for item in invoice["items"])
-        c.setFont("DejaVu", 12)
-        y -= 20
-        c.drawRightString(530, y, f"UKUPNO bez PDV-a: {subtotal:.2f} EUR")
-
-        if invoice.get("pdv_included"):
-            total_with_vat = invoice["total"]
-            y -= 20
-            c.drawRightString(530, y, f"UKUPNO sa PDV-om 25%: {total_with_vat:.2f} EUR")
-
-        c.save()

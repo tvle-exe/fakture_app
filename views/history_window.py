@@ -1,26 +1,43 @@
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
-from views.base_window import BaseWindow
 from PySide6.QtWidgets import QHeaderView
+from views.base_window import BaseWindow
+from utils.resource_path import resource_path
+
 
 class HistoryWindow(BaseWindow):
     def __init__(self):
-        super().__init__(resizable=True)  # resizable, veličina 900x700 po defaultu
+        super().__init__(resizable=True)
 
-        # Učitaj .ui file
         loader = QUiLoader()
-        ui_file = QFile("ui/history_window.ui")
-        ui_file.open(QFile.ReadOnly)
-        self.ui = loader.load(ui_file)
+        ui_path = resource_path("ui/history_window.ui")
+        ui_file = QFile(ui_path)
+
+        if not ui_file.open(QFile.ReadOnly):
+            raise RuntimeError(f"Ne mogu otvoriti UI file: {ui_path}")
+
+        ui = loader.load(ui_file, self)
         ui_file.close()
 
-        # Postavi centralni widget
-        self.setCentralWidget(self.ui)
+        if ui is None:
+            raise RuntimeError("history_window.ui se nije učitao")
+
+        # 🔑 AKO je UI QMainWindow
+        if hasattr(ui, "centralWidget") and ui.centralWidget():
+            self.setCentralWidget(ui.centralWidget())
+            if ui.menuBar():
+                self.setMenuBar(ui.menuBar())
+            if ui.statusBar():
+                self.setStatusBar(ui.statusBar())
+        else:
+            # 🔑 AKO je UI QWidget
+            self.setCentralWidget(ui)
+
+        self.ui = ui
         self.setWindowTitle("Povijest faktura")
 
-        # Stretch kolone u tablicama
+        # Stretch kolone (ovo sada sigurno postoji)
         self.ui.invoicesTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.itemsTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        # Prikaži fullscreen
         self.show_fullscreen()

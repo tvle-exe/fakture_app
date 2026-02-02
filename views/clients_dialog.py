@@ -1,38 +1,39 @@
-import os
-from PySide6.QtWidgets import QDialog, QPushButton, QTableWidget, QVBoxLayout, QHeaderView
+from PySide6.QtWidgets import QPushButton, QTableWidget, QHeaderView
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
 
-class ClientsDialog(QDialog):
+from utils.resource_path import resource_path
+
+
+class ClientsDialog:
     def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # --- učitaj UI ---
         loader = QUiLoader()
-        ui_path = os.path.join("ui", "clients_dialog.ui")
-
+        ui_path = resource_path("ui/clients_dialog.ui")
         file = QFile(ui_path)
-        file.open(QFile.ReadOnly)
-        content = loader.load(file)
+
+        if not file.open(QFile.ReadOnly):
+            raise RuntimeError(f"Ne mogu otvoriti UI file: {ui_path}")
+
+        self.dialog = loader.load(file, parent)
         file.close()
 
-        layout = QVBoxLayout(self)
-        layout.addWidget(content)
-        self.setLayout(layout)
+        if self.dialog is None:
+            raise RuntimeError("clients_dialog.ui se nije učitao")
 
-        self.setWindowTitle("Klijenti")
+        self.dialog.setWindowTitle("Klijenti")
+        self.dialog.showMaximized()
+        self.dialog.setMinimumSize(900, 700)
 
         # --- tablica ---
-        self.table = content.findChild(QTableWidget, "clientsTableWidget")
+        self.table = self.dialog.findChild(QTableWidget, "clientsTableWidget")
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # --- gumbi ---
-        self.addButton = content.findChild(QPushButton, "addClientButton")
-        self.editButton = content.findChild(QPushButton, "editClientButton")
-        self.deleteButton = content.findChild(QPushButton, "deleteClientButton")
-        self.closeButton = content.findChild(QPushButton, "closeButton")
-        self.closeButton.clicked.connect(self.close)
+        self.addButton = self.dialog.findChild(QPushButton, "addClientButton")
+        self.editButton = self.dialog.findChild(QPushButton, "editClientButton")
+        self.deleteButton = self.dialog.findChild(QPushButton, "deleteClientButton")
+        self.closeButton = self.dialog.findChild(QPushButton, "closeButton")
+        self.closeButton.clicked.connect(self.dialog.close)
 
-        # --- fullscreen i resizable ---
-        self.showMaximized()           # otvoreno fullscreen
-        self.setMinimumSize(900, 700)  # sprječava da korisnik napravi dijalog premali
+    def show(self):
+        self.dialog.show()
