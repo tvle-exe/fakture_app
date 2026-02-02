@@ -127,5 +127,30 @@
     "subtotal": 56.0,
     "pdv_included": true,
     "total_with_vat": 70.0
+  },
+  {
+    "invoice_number": "89",
+    "client": "xxxx",
+    "description": "qweq",
+    "date": "2026-02-02",
+    "items": [
+      {
+        "description": "ert",
+        "quantity": 4.0,
+        "unit": "kom",
+        "price": 2.0,
+        "total": 8.0
+      },
+      {
+        "description": "ssss",
+        "quantity": 4.0,
+        "unit": "kom",
+        "price": 5.0,
+        "total": 20.0
+      }
+    ],
+    "subtotal": 28.0,
+    "pdv_included": true,
+    "total_with_vat": 35.0
   }
 ]

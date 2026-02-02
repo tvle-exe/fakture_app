@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+from PySide6.QtWidgets import QMessageBox
 from views.invoice_dialog import InvoiceDialog
 from utils.pdf_utils import export_invoice_pdf
 
@@ -25,9 +26,7 @@ class InvoiceController:
         # povezivanje gumbića
         self.dialog.closeButton.clicked.connect(self.dialog.close)
         self.dialog.saveButton.clicked.connect(self.save_and_export)
-        
-
-        
+              
 
     def open(self):
         self.dialog.open()
@@ -36,6 +35,12 @@ class InvoiceController:
         invoice = self.dialog.collect_invoice_data()
         if not invoice["invoice_number"]:
             print("GREŠKA: broj fakture nije unesen!")
+             # Prikaži grešku korisniku
+            QMessageBox.warning(
+                self.dialog.dialog,  # parent je glavni dialog
+                "Greška",
+                "Broj fakture nije unesen!"
+            )
             return
 
         # ================= JSON =================

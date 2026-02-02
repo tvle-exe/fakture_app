@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile, QDate, Qt
-
+from views.base_dialog import BaseDialog
 from utils.resource_path import resource_path
 from .new_client_dialog import NewClientDialog
 from repositories.client_repository import ClientRepository
@@ -20,9 +20,8 @@ def to_float(text: str) -> float:
         return 0.0
 
 
-
 class InvoiceDialog:
-    def __init__(self):
+    def __init__(self, parent=None):
         loader = QUiLoader()
         ui_path = resource_path("ui/invoice_dialog.ui")
         file = QFile(ui_path)
@@ -30,33 +29,33 @@ class InvoiceDialog:
         if not file.open(QFile.ReadOnly):
             raise RuntimeError(f"Ne mogu otvoriti UI file: {ui_path}")
 
-        self._dialog = loader.load(file)
+        # učitaj UI
+        self.dialog = loader.load(file, parent)
         file.close()
 
-        if self._dialog is None:
+        if self.dialog is None:
             raise RuntimeError("invoice_dialog.ui se nije učitao")
 
         # --- fullscreen i resizable ---
-        self._dialog.showMaximized()
-        self._dialog.setMinimumSize(900, 700)
-
+        self.dialog.setMinimumSize(900, 700)
+        self.dialog.showMaximized()
 
         # ================================
         # PUBLIC UI
         # ================================
-        self.closeButton = self._dialog.findChild(QPushButton, "closeButton")
-        self.saveButton = self._dialog.findChild(QPushButton, "saveButton")
-        self.addItemButton = self._dialog.findChild(QPushButton, "addItemButton")
-        self.removeItemButton = self._dialog.findChild(QPushButton, "removeItemButton")
-        self.addClientButton = self._dialog.findChild(QPushButton, "addClientButton")
+        self.closeButton = self.dialog.findChild(QPushButton, "closeButton")
+        self.saveButton = self.dialog.findChild(QPushButton, "saveButton")
+        self.addItemButton = self.dialog.findChild(QPushButton, "addItemButton")
+        self.removeItemButton = self.dialog.findChild(QPushButton, "removeItemButton")
+        self.addClientButton = self.dialog.findChild(QPushButton, "addClientButton")
 
-        self.invoiceNumberLineEdit = self._dialog.findChild(QLineEdit, "invoiceNumberLineEdit")
-        self.clientComboBox = self._dialog.findChild(QComboBox, "clientComboBox")
-        self.descriptionLineEdit = self._dialog.findChild(QLineEdit, "descriptionLineEdit")
-        self.dateEdit = self._dialog.findChild(QDateEdit, "dateEdit")
-        self.totalLineEdit = self._dialog.findChild(QLineEdit, "totalLineEdit")
-        self.table = self._dialog.findChild(QTableWidget, "itemsTableWidget")
-        self.pdvCheckBox = self._dialog.findChild(QCheckBox, "pdvCheckBox")
+        self.invoiceNumberLineEdit = self.dialog.findChild(QLineEdit, "invoiceNumberLineEdit")
+        self.clientComboBox = self.dialog.findChild(QComboBox, "clientComboBox")
+        self.descriptionLineEdit = self.dialog.findChild(QLineEdit, "descriptionLineEdit")
+        self.dateEdit = self.dialog.findChild(QDateEdit, "dateEdit")
+        self.totalLineEdit = self.dialog.findChild(QLineEdit, "totalLineEdit")
+        self.table = self.dialog.findChild(QTableWidget, "itemsTableWidget")
+        self.pdvCheckBox = self.dialog.findChild(QCheckBox, "pdvCheckBox")
 
         # ================================
         # INIT
@@ -81,10 +80,10 @@ class InvoiceDialog:
     # DIALOG CONTROL
     # ================================
     def open(self):
-        self._dialog.show()
+        self.dialog.show()
 
     def close(self):
-        self._dialog.close()
+        self.dialog.close()
 
     # ================================
     # ITEMS
@@ -106,7 +105,6 @@ class InvoiceDialog:
             self.recalculate_total()
 
     def recalculate_row(self, row, column):
-        # računamo samo kad se mijenja količina ili cijena
         if column not in (1, 3):
             return
 
@@ -116,27 +114,21 @@ class InvoiceDialog:
         if not qty_item or not price_item:
             return
 
-        # formatiraj cijenu po jedinici s 2 decimale i € znak
-        if price_item:
-            price_item.setText(f"{to_float(price_item.text()):.2f} €")
+        price_item.setText(f"{to_float(price_item.text()):.2f} €")
 
         try:
             total = to_float(qty_item.text()) * to_float(price_item.text())
         except Exception:
             total = 0.0
 
-        # provjeri postoji li ćelija za ukupni iznos
         if not self.table.item(row, 4):
             self.table.setItem(row, 4, QTableWidgetItem())
 
-        # blokiraj signale kako bi spriječili beskonačno rekurzivno pozivanje
         self.table.blockSignals(True)
         self.table.item(row, 4).setText(f"{total:.2f} €")
         self.table.blockSignals(False)
 
-        # ažuriraj ukupni iznos
         self.recalculate_total()
-
 
     def recalculate_total(self):
         total = sum(
@@ -152,7 +144,7 @@ class InvoiceDialog:
     # CLIENTS
     # ================================
     def open_new_client_dialog(self):
-        dialog = NewClientDialog(parent=self._dialog)
+        dialog = NewClientDialog(parent=self.dialog)
         if dialog.exec():
             self.client_repo.add(dialog.get_data())
             self.reload_clients()

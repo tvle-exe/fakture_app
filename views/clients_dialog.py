@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton, QTableWidget, QHeaderView
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
-
+from views.base_dialog import BaseDialog
 from utils.resource_path import resource_path
 
 
@@ -14,15 +14,18 @@ class ClientsDialog:
         if not file.open(QFile.ReadOnly):
             raise RuntimeError(f"Ne mogu otvoriti UI file: {ui_path}")
 
-        self.dialog = loader.load(file, parent)
+        self.dialog = loader.load(file, parent)  # parent=main window
         file.close()
 
         if self.dialog is None:
             raise RuntimeError("clients_dialog.ui se nije učitao")
 
         self.dialog.setWindowTitle("Klijenti")
-        self.dialog.showMaximized()
-        self.dialog.setMinimumSize(900, 700)
+
+        # BaseDialog wrapper za fullscreen i resize
+        self.base = BaseDialog(parent=parent, width=900, height=700, resizable=True)
+        self.dialog.resize(900, 700)
+        self.dialog.showMaximized()  # fullscreen
 
         # --- tablica ---
         self.table = self.dialog.findChild(QTableWidget, "clientsTableWidget")
