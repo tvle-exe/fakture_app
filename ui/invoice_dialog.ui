@@ -83,6 +83,7 @@
    </item>
    <item>
     <widget class="QTableWidget" name="itemsTableWidget">
+    
      <property name="columnCount">
       <number>5</number>
      </property>

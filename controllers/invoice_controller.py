@@ -25,6 +25,9 @@ class InvoiceController:
         # povezivanje gumbića
         self.dialog.closeButton.clicked.connect(self.dialog.close)
         self.dialog.saveButton.clicked.connect(self.save_and_export)
+        
+
+        
 
     def open(self):
         self.dialog.open()

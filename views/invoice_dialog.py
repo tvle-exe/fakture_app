@@ -20,6 +20,7 @@ def to_float(text: str) -> float:
         return 0.0
 
 
+
 class InvoiceDialog:
     def __init__(self):
         loader = QUiLoader()
@@ -38,6 +39,7 @@ class InvoiceDialog:
         # --- fullscreen i resizable ---
         self._dialog.showMaximized()
         self._dialog.setMinimumSize(900, 700)
+
 
         # ================================
         # PUBLIC UI

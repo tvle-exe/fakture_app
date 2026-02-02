@@ -102,5 +102,30 @@
     "subtotal": 28.0,
     "pdv_included": true,
     "total_with_vat": 35.0
+  },
+  {
+    "invoice_number": "777",
+    "client": "xxxx",
+    "description": "qqqq",
+    "date": "2026-02-03",
+    "items": [
+      {
+        "description": "sadasd",
+        "quantity": 1.0,
+        "unit": "kom",
+        "price": 4.0,
+        "total": 4.0
+      },
+      {
+        "description": "aaaa",
+        "quantity": 1.0,
+        "unit": "kom",
+        "price": 52.0,
+        "total": 52.0
+      }
+    ],
+    "subtotal": 56.0,
+    "pdv_included": true,
+    "total_with_vat": 70.0
   }
 ]

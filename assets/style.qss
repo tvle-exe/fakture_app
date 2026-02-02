@@ -1,8 +1,158 @@
-QMainWindow {
-    background-color: #f5f5f5;
+/* ================= GLOBALNI FONT ================= */
+* {
+    font-family: "Segoe UI", sans-serif;
+    font-size: 16px; /* globalno smanjeno */
+    color: #ffffff;
 }
 
+/* ================= MAIN WINDOW SPECIFIČNI FONT ================= */
+QMainWindow QLabel {
+    font-size: 18px; /* MainWindow tekst ostaje 18px */
+}
+
+/* ================= MAIN WINDOW ================= */
+QMainWindow, QWidget {
+    background-color: #2e2e2e;
+}
+
+QMainWindow QLabel#label {
+    font-size: 36px;
+    color: #FFD700;
+}
+
+QMainWindow QPushButton {
+    min-height: 55px; /* veći gumbi */
+    min-width: 140px;
+    font-size: 22px;  /* veći font za main window */
+    padding: 12px 24px;
+}
+
+
+/* ================= PUSH BUTTON PREMIUM 3D ================= */
 QPushButton {
+    background-color: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 #ffe38c,
+        stop:0.5 #f2c94c,
+        stop:1 #d4af37
+    );
+    border: 2px solid #bfa134;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: #000000;
+    min-height: 45px;
+    min-width: 120px;
+    border-top: 2px solid #fff7d6;
+    border-left: 2px solid #fff7d6;
+    border-bottom: 2px solid #bfa134;
+    border-right: 2px solid #bfa134;
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 #fff3b0,
+        stop:0.5 #f7d35a,
+        stop:1 #e6c155
+    );
+}
+
+QPushButton:pressed {
+    background-color: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 #d4af37,
+        stop:1 #bfa134
+    );
+    padding-left: 13px;
+    padding-top: 13px;
+}
+
+/* ================= LINE EDIT / COMBO BOX ================= */
+QLineEdit, QTextEdit, QComboBox, QDateEdit {
+    background-color: #3a3a3a;
+    border: 2px solid #555555;
+    border-radius: 8px;
     padding: 8px;
-    font-size: 14px;
+    font-size: 16px; /* globalno smanjeno */
+    color: #ffffff;
+}
+
+/* ================= TABLE WIDGET ================= */
+QTableWidget {
+    background-color: #3a3a3a;
+    gridline-color: #555555;
+    font-size: 16px; /* globalno smanjeno */
+    color: #ffffff;
+}
+
+/* Ovo rješava problem "prekrivanja" teksta dok se tipka */
+QTableWidget QLineEdit {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+QHeaderView::section {
+    background-color: #555555;
+    color: #ffffff;
+    padding: 8px;
+    font-size: 16px; /* globalno smanjeno */
+}
+
+/* ================= CHECKBOX ================= */
+QCheckBox {
+    spacing: 6px;
+    font-size: 16px; /* globalno smanjeno */
+}
+
+QCheckBox::indicator {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+    background-color: #3a3a3a;
+}
+
+QCheckBox::indicator:checked {
+    background-color: #d4af37;
+}
+
+/* ================= LABEL ================= */
+QLabel {
+    font-size: 16px; /* globalno smanjeno */
+    color: #ffffff;
+}
+
+/* ================= GROUP BOX ================= */
+QGroupBox {
+    font-size: 16px; /* globalno smanjeno */
+    color: #ffffff;
+    border: 2px solid #555555;
+    border-radius: 8px;
+    margin-top: 15px;
+    padding: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    font-weight: bold;
+}
+
+/* ================= SCROLLBAR ================= */
+QScrollBar:vertical {
+    background-color: #555555;
+    width: 16px;
+    border-radius: 8px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #d4af37;
+    min-height: 20px;
+    border-radius: 8px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: none;
 }
