@@ -3,7 +3,7 @@ REM ===============================
 REM Pokreni Fakture aplikaciju
 REM ===============================
 
-REM Folder u kojem se nalazi ova batch skriptaaa
+REM Folder u kojem se nalazi ova batch skripta
 SET APP_DIR=%~dp0
 
 REM Promijeni trenutni folder na folder aplikacije
