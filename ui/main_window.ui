@@ -73,6 +73,20 @@
     </item>
 
     <item>
+    <widget class="QPushButton" name="openPdfFolderButton">
+    <property name="font">
+    <font>
+        <pointsize>16</pointsize>
+    </font>
+    </property>
+    <property name="text">
+    <string>Otvori PDF folder</string>
+    </property>
+    </widget>
+    </item>
+
+
+    <item>
      <widget class="QPushButton" name="exitButton">
       <property name="font">
        <font>
