@@ -26,7 +26,9 @@ class InvoiceController:
         # povezivanje gumbića
         self.dialog.closeButton.clicked.connect(self.dialog.close)
         self.dialog.saveButton.clicked.connect(self.save_and_export)
-              
+        
+        # ⚡️ automatski recalc ukupnog iznosa kada se promijeni PDV
+        self.dialog.pdvCheckBox.stateChanged.connect(self.dialog.recalculate_total)
 
     def open(self):
         self.dialog.open()
@@ -83,5 +85,12 @@ class InvoiceController:
 
         # ================= PDF =================
         export_invoice_pdf(json_invoice)
+
+        # ⚡ obavijest korisniku
+        QMessageBox.information(
+            self.dialog.dialog,  # parent je dialog
+            "Uspjeh",
+            f"Faktura #{invoice['invoice_number']} je spremljena i PDF je exportan."
+        )
 
         self.dialog.close()

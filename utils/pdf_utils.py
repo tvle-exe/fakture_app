@@ -33,7 +33,7 @@ def export_invoice_pdf(invoice):
 
     width, height = A4
     
-    # Registracija fontova (koristimo root folder aplikacije)
+    # Registracija fontova
     font_path = os.path.join(BASE_DIR, "assets", "fonts", "DejaVuSans.ttf")
     pdfmetrics.registerFont(TTFont('DejaVu', font_path))
 
@@ -91,6 +91,11 @@ def export_invoice_pdf(invoice):
         total_with_vat = invoice.get("total_with_vat", subtotal * 1.25)
         y -= 20
         c.drawRightString(530, y, f"UKUPNO sa PDV-om 25%: {total_with_vat:.2f} €")
+    else:
+        # ================= REVERSE CHARGE NAPOMENA =================
+        y -= 30
+        c.setFont("DejaVu", 10)
+        c.drawString(50, y, "Ova isporuka podliježe prijenosu porezne obveze prema članku 90. Zakona o PDV-u. PDV nije obračunat.")
 
     c.save()
     return filename

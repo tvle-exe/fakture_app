@@ -1,9 +1,11 @@
-from PySide6.QtWidgets import QTableWidgetItem, QMessageBox, QPushButton, QTableWidget, QLineEdit, QDateEdit, QCheckBox
-from views.history_window import HistoryWindow
-from PySide6.QtCore import QDate
-import json
 import os
 import sys
+import json
+from PySide6.QtWidgets import (
+    QTableWidgetItem, QMessageBox, QPushButton, QTableWidget, QLineEdit, QDateEdit, QCheckBox
+)
+from PySide6.QtCore import QDate
+from views.history_window import HistoryWindow
 from utils.pdf_utils import export_invoice_pdf
 
 # ================= ROOT FOLDER APLIKACIJE =================
@@ -12,7 +14,6 @@ if getattr(sys, 'frozen', False):
 else:
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-# putanje za JSON i PDF
 DATA_DIR = os.path.join(BASE_DIR, "data")
 PDF_DIR = os.path.join(BASE_DIR, "pdf")
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -20,12 +21,12 @@ os.makedirs(PDF_DIR, exist_ok=True)
 
 INVOICES_JSON_PATH = os.path.join(DATA_DIR, "invoices.json")
 
+
 class HistoryController:
     def __init__(self):
         self.window = HistoryWindow()
-        self.invoices_file = INVOICES_JSON_PATH  # JSON u root/data
+        self.invoices_file = INVOICES_JSON_PATH
 
-        # Pronađi sve widgete
         ui = self.window.ui
         self.addItemButton = ui.findChild(QPushButton, "addItemButton")
         self.removeItemButton = ui.findChild(QPushButton, "removeItemButton")
@@ -44,9 +45,19 @@ class HistoryController:
         self.itemsTableWidget = ui.findChild(QTableWidget, "itemsTableWidget")
         self.invoicesTable = ui.findChild(QTableWidget, "invoicesTable")
 
-        self.load_invoices()
+        # ========== SIGNALS ==========
         self.connect_signals()
 
+        # automatski recalc kada se mijenja cell u table
+        self.itemsTableWidget.cellChanged.connect(self.recalculate_row)
+
+        # automatski recalc kad se promijeni PDV kvačica
+        self.pdvCheckBox.stateChanged.connect(self.recalculate_total)
+
+        # load invoices iz JSON-a
+        self.load_invoices()
+
+    # ================== SIGNALS ==================
     def connect_signals(self):
         self.addItemButton.clicked.connect(self.add_item)
         self.removeItemButton.clicked.connect(self.remove_item)
@@ -56,8 +67,8 @@ class HistoryController:
         self.deleteInvoiceButton.clicked.connect(self.delete_invoice)
         self.exportPDFButton.clicked.connect(self.export_selected_invoice_pdf)
 
+    # ================== JSON LOADING ==================
     def load_invoices(self):
-        """Učitaj fakture iz JSON-a u tablicu faktura"""
         try:
             with open(self.invoices_file, "r", encoding="utf-8") as f:
                 self.invoices = json.load(f)
@@ -71,16 +82,17 @@ class HistoryController:
             self.invoicesTable.setItem(row, 0, QTableWidgetItem(invoice.get("invoice_number", "")))
             self.invoicesTable.setItem(row, 1, QTableWidgetItem(invoice.get("client", "")))
             self.invoicesTable.setItem(row, 2, QTableWidgetItem(invoice.get("date", "")))
-            self.invoicesTable.setItem(row, 3, QTableWidgetItem(str(invoice.get("total_with_vat", ""))))
+            self.invoicesTable.setItem(row, 3, QTableWidgetItem(f"{float(invoice.get('total_with_vat', 0)):.2f} €"))
 
+    # ================== LOAD SELECTED INVOICE ==================
     def load_selected_invoice(self):
-        """Prikaz odabrane fakture u formi i stavkama"""
         selected = self.invoicesTable.selectedItems()
         if not selected:
             return
         row = selected[0].row()
         invoice = self.invoices[row]
 
+        # osnovni podaci
         self.invoiceNumberLineEdit.setText(invoice.get("invoice_number", ""))
         self.clientLineEdit.setText(invoice.get("client", ""))
         self.descriptionLineEdit.setText(invoice.get("description", ""))
@@ -88,40 +100,107 @@ class HistoryController:
         year, month, day = map(int, date_str.split("-"))
         self.dateEdit.setDate(QDate(year, month, day))
         self.pdvCheckBox.setChecked(invoice.get("pdv_included", True))
-        self.totalLineEdit.setText(str(invoice.get("total_with_vat", "")))
+        self.totalLineEdit.setText(f"{float(invoice.get('total_with_vat', 0)):.2f} €")
 
+        # očisti table
         self.itemsTableWidget.setRowCount(0)
+
+        # učitaj stavke
         for item in invoice.get("items", []):
             row_item = self.itemsTableWidget.rowCount()
             self.itemsTableWidget.insertRow(row_item)
             self.itemsTableWidget.setItem(row_item, 0, QTableWidgetItem(item.get("description", "")))
-            self.itemsTableWidget.setItem(row_item, 1, QTableWidgetItem(str(item.get("quantity", ""))))
-            self.itemsTableWidget.setItem(row_item, 2, QTableWidgetItem(item.get("unit", "")))
-            self.itemsTableWidget.setItem(row_item, 3, QTableWidgetItem(str(item.get("price", ""))))
-            self.itemsTableWidget.setItem(row_item, 4, QTableWidgetItem(str(item.get("total", ""))))
+            self.itemsTableWidget.setItem(row_item, 1, QTableWidgetItem(str(item.get("quantity", "1"))))
+            self.itemsTableWidget.setItem(row_item, 2, QTableWidgetItem(item.get("unit", "kom")))
+            # price sa €
+            price = float(item.get("price", 0))
+            self.itemsTableWidget.setItem(row_item, 3, QTableWidgetItem(f"{price:.2f} €"))
+            # total sa €
+            total = float(item.get("total", 0))
+            self.itemsTableWidget.setItem(row_item, 4, QTableWidgetItem(f"{total:.2f} €"))
 
+    # ================== ADD / REMOVE ITEM ==================
     def add_item(self):
         row = self.itemsTableWidget.rowCount()
         self.itemsTableWidget.insertRow(row)
-        for col in range(5):
-            self.itemsTableWidget.setItem(row, col, QTableWidgetItem(""))
+        self.itemsTableWidget.setItem(row, 0, QTableWidgetItem(""))
+        self.itemsTableWidget.setItem(row, 1, QTableWidgetItem("1"))      # default quantity
+        self.itemsTableWidget.setItem(row, 2, QTableWidgetItem("kom"))    # default unit
+        self.itemsTableWidget.setItem(row, 3, QTableWidgetItem("0"))      # price
+        self.itemsTableWidget.setItem(row, 4, QTableWidgetItem("0"))      # total
 
     def remove_item(self):
         selected = self.itemsTableWidget.selectedItems()
         if selected:
             row = selected[0].row()
             self.itemsTableWidget.removeRow(row)
+            self.recalculate_total()
 
+    # ================== PARSING ==================
+    def parse_currency(self, text):
+        if not text:
+            return 0.0
+        return float(text.replace("€", "").replace(",", ".").strip())
+
+    # ================== RECALC ==================
+    def recalculate_row(self, row, column):
+        if column not in (1, 3):
+            return
+
+        qty_item = self.itemsTableWidget.item(row, 1)
+        price_item = self.itemsTableWidget.item(row, 3)
+
+        try:
+            qty = float(qty_item.text() or 0)
+            price = self.parse_currency(price_item.text() if price_item else "0")
+        except ValueError:
+            qty, price = 0, 0
+
+        # postavi cijenu formatirano
+        if price_item:
+            self.itemsTableWidget.blockSignals(True)
+            price_item.setText(f"{price:.2f} €")
+            self.itemsTableWidget.blockSignals(False)
+
+        total = qty * price
+
+        # postavi total sa €
+        if not self.itemsTableWidget.item(row, 4):
+            self.itemsTableWidget.setItem(row, 4, QTableWidgetItem())
+
+        self.itemsTableWidget.blockSignals(True)
+        self.itemsTableWidget.item(row, 4).setText(f"{total:.2f} €")
+        self.itemsTableWidget.blockSignals(False)
+
+        self.recalculate_total()
+
+    def recalculate_total(self):
+        total = 0
+        for r in range(self.itemsTableWidget.rowCount()):
+            item = self.itemsTableWidget.item(r, 4)
+            if item and item.text():
+                try:
+                    total += self.parse_currency(item.text())
+                except ValueError:
+                    pass
+
+        if self.pdvCheckBox.isChecked():
+            total *= 1.25
+
+        self.totalLineEdit.setText(f"{total:.2f} €")
+
+    # ================== SAVE ==================
     def save_invoice(self):
-        """Spremi fakturu kao novu, bez mijenjanja postojećih faktura"""
+        self.recalculate_total()  # osiguraj da su total-i ažurirani
+
         items = []
         for r in range(self.itemsTableWidget.rowCount()):
             items.append({
                 "description": self.itemsTableWidget.item(r, 0).text() if self.itemsTableWidget.item(r, 0) else "",
                 "quantity": float(self.itemsTableWidget.item(r, 1).text() or 0),
                 "unit": self.itemsTableWidget.item(r, 2).text() if self.itemsTableWidget.item(r, 2) else "",
-                "price": float(self.itemsTableWidget.item(r, 3).text() or 0),
-                "total": float(self.itemsTableWidget.item(r, 4).text() or 0)
+                "price": self.parse_currency(self.itemsTableWidget.item(r, 3).text() if self.itemsTableWidget.item(r, 3) else "0"),
+                "total": self.parse_currency(self.itemsTableWidget.item(r, 4).text() if self.itemsTableWidget.item(r, 4) else "0")
             })
 
         invoice = {
@@ -137,13 +216,13 @@ class HistoryController:
 
         self.invoices.append(invoice)
 
-        # spremi u JSON u root/data
         with open(self.invoices_file, "w", encoding="utf-8") as f:
             json.dump(self.invoices, f, indent=4, ensure_ascii=False)
 
         self.load_invoices()
         QMessageBox.information(self.window, "Uspjeh", "Faktura je spremljena kao nova")
 
+    # ================== DELETE ==================
     def delete_invoice(self):
         selected = self.invoicesTable.selectedItems()
         if not selected:
@@ -172,6 +251,7 @@ class HistoryController:
             self.itemsTableWidget.setRowCount(0)
             QMessageBox.information(self.window, "Uspjeh", "Faktura je obrisana")
 
+    # ================== PDF ==================
     def export_selected_invoice_pdf(self):
         selected = self.invoicesTable.selectedItems()
         if not selected:
@@ -181,11 +261,11 @@ class HistoryController:
         invoice = self.invoices[row]
 
         try:
-            # export u PDF u root/pdf
             export_invoice_pdf(invoice)
             QMessageBox.information(self.window, "Uspjeh", f"Faktura {invoice['invoice_number']} je exportana u PDF")
         except Exception as e:
             QMessageBox.critical(self.window, "Greška", f"Greška pri exportu PDF: {str(e)}")
 
+    # ================== OPEN ==================
     def open(self):
         self.window.show()
