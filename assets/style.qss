@@ -78,6 +78,7 @@ QPushButton#removeItemButton {
 }
 
 
+
 /* ================= LINE EDIT / COMBO BOX ================= */
 QLineEdit, QTextEdit, QComboBox, QDateEdit {
     background-color: #3a3a3a;

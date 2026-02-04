@@ -69,6 +69,13 @@ class InvoiceDialog:
 
         self.addClientButton.clicked.connect(self.open_new_client_dialog)
         self.addClientButton.setMaximumWidth(30)
+        # Povećaj font i gumb
+        self.addClientButton.setStyleSheet("""
+            font-size: 20px;       /* veći font */
+            min-width: 40px;       /* širi gumb */
+            min-height: 20px;      /* viši gumb */
+        """)
+
 
         # ================================
         # DATA
