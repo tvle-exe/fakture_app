@@ -68,6 +68,16 @@ QPushButton:pressed {
     padding-top: 13px;
 }
 
+/* ================= MANJI GUMBI ZA STAVKE ================= */
+QPushButton#addItemButton,
+QPushButton#removeItemButton {
+    min-height: 45px;   /* visina između velikih i malih */
+    min-width: 100px;   /* šira nego prije, ali manja od glavnih gumbi */
+    font-size: 16px;    /* font veći od malog, ali manji od glavnog */
+    padding: 8px 16px;
+}
+
+
 /* ================= LINE EDIT / COMBO BOX ================= */
 QLineEdit, QTextEdit, QComboBox, QDateEdit {
     background-color: #3a3a3a;
@@ -139,6 +149,8 @@ QGroupBox::title {
     padding: 0 5px;
     font-weight: bold;
 }
+
+
 
 /* ================= SCROLLBAR ================= */
 QScrollBar:vertical {

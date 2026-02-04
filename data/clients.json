@@ -1,5 +1,12 @@
 [
   {
+    "name": "Overseas Express",
+    "oib": "19407280555",
+    "address": null,
+    "phone": "01 3454 555",
+    "email": "info@overseas.hr"
+  },
+  {
     "name": "xxxx",
     "oib": "123123123",
     "address": "asdads",
