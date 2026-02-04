@@ -1,220 +1,109 @@
 [
-  {
-    "invoice_number": "125",
-    "client": "jedan",
-    "description": "qqqqqq",
-    "date": "2026-02-01",
-    "items": [
-      {
-        "description": "pe",
-        "quantity": 3.0,
-        "unit": "kom",
-        "price": 4.0,
-        "total": 8.0
-      },
-      {
-        "description": "nis",
-        "quantity": 3.0,
-        "unit": "kom",
-        "price": 5.0,
-        "total": 15.0
-      }
-    ],
-    "subtotal": 23.0,
-    "pdv_included": true,
-    "total_with_vat": 28.75
-  },
-  {
-    "invoice_number": "1",
-    "client": "xxxx",
-    "description": "asd",
-    "date": "2026-02-01",
-    "items": [
-      {
-        "description": "xxx",
-        "quantity": 4.0,
-        "unit": "kom",
-        "price": 5.0,
-        "total": 20.0
-      }
-    ],
-    "subtotal": 20.0,
-    "pdv_included": true,
-    "total_with_vat": 25.0
-  },
-  {
-    "invoice_number": "43",
-    "client": "jedan",
-    "description": "qqqqq",
-    "date": "2026-02-02",
-    "items": [
-      {
-        "description": "gg",
-        "quantity": 2.0,
-        "unit": "kom",
-        "price": 5.0,
-        "total": 10.0
-      }
-    ],
-    "subtotal": 10.0,
-    "pdv_included": true,
-    "total_with_vat": 12.5
-  },
-  {
-    "invoice_number": "89",
-    "client": "xxxx",
-    "description": "qweq",
-    "date": "2026-02-02",
-    "items": [
-      {
-        "description": "ert",
-        "quantity": 4.0,
-        "unit": "kom",
-        "price": 2.0,
-        "total": 8.0
-      },
-      {
-        "description": "ssss",
-        "quantity": 4.0,
-        "unit": "kom",
-        "price": 5.0,
-        "total": 20.0
-      }
-    ],
-    "subtotal": 28.0,
-    "pdv_included": true,
-    "total_with_vat": 35.0
-  },
-  {
-    "invoice_number": "1234",
-    "client": "Antonio",
-    "description": "faktura",
-    "date": "2026-02-03",
-    "items": [
-      {
-        "description": "kutija",
-        "quantity": 2.0,
-        "unit": "kom",
-        "price": 6.0,
-        "total": 12.0
-      },
-      {
-        "description": "gorivo",
-        "quantity": 3.0,
-        "unit": "L",
-        "price": 5.0,
-        "total": 15.0
-      }
-    ],
-    "subtotal": 27.0,
-    "pdv_included": true,
-    "total_with_vat": 33.75
-  },
-  {
-    "invoice_number": "konj2",
-    "client": "Antonio",
-    "description": "",
-    "date": "2026-02-04",
-    "items": [
-      {
-        "description": "aaa",
-        "quantity": 4.0,
-        "unit": "kom",
-        "price": 5.0,
-        "total": 20.0
-      },
-      {
-        "description": "nnnn",
-        "quantity": 2.0,
-        "unit": "kom",
-        "price": 2.0,
-        "total": 4.0
-      },
-      {
-        "description": "rrrr",
-        "quantity": 2.0,
-        "unit": "kom",
-        "price": 4.0,
-        "total": 8.0
-      },
-      {
-        "description": "ss",
-        "quantity": 5.0,
-        "unit": "kom",
-        "price": 5.0,
-        "total": 25.0
-      }
-    ],
-    "subtotal": 57.0,
-    "pdv_included": true,
-    "total_with_vat": 71.25
-  },
-  {
-    "invoice_number": "poni",
-    "client": "xxxx",
-    "description": "",
-    "date": "2026-02-04",
-    "items": [
-      {
-        "description": "po",
-        "quantity": 2.0,
-        "unit": "kom",
-        "price": 2.0,
-        "total": 4.0
-      },
-      {
-        "description": "ni",
-        "quantity": 3.0,
-        "unit": "kom",
-        "price": 3.0,
-        "total": 9.0
-      }
-    ],
-    "subtotal": 13.0,
-    "pdv_included": false,
-    "total_with_vat": 16.25
-  },
-  {
-    "invoice_number": "konj",
-    "client": "Antonio",
-    "description": "",
-    "date": "2026-02-04",
-    "items": [
-      {
-        "description": "aaa",
-        "quantity": 4.0,
-        "unit": "kom",
-        "price": 5.0,
-        "total": 20.0
-      },
-      {
-        "description": "nnnn",
-        "quantity": 2.0,
-        "unit": "kom",
-        "price": 2.0,
-        "total": 4.0
-      }
-    ],
-    "subtotal": 24.0,
-    "pdv_included": false,
-    "total_with_vat": 24.0
-  },
-  {
-    "invoice_number": "2",
-    "client": "xxxx",
-    "description": "2",
-    "date": "2026-02-04",
-    "items": [
-      {
-        "description": "2",
-        "quantity": 1.0,
-        "unit": "kom",
-        "price": 0,
-        "total": 0.0
-      }
-    ],
-    "subtotal": 0.0,
-    "pdv_included": true,
-    "total_with_vat": 0.0
-  }
+    {
+        "invoice_number": "43",
+        "client": "jedan",
+        "description": "qqqqq",
+        "date": "2026-02-02",
+        "items": [
+            {
+                "description": "gg",
+                "quantity": 2.0,
+                "unit": "kom",
+                "price": 5.0,
+                "total": 10.0
+            }
+        ],
+        "subtotal": 10.0,
+        "pdv_included": true,
+        "total_with_vat": 12.5
+    },
+    {
+        "invoice_number": "1234",
+        "client": "Antonio",
+        "description": "faktura",
+        "date": "2026-02-03",
+        "items": [
+            {
+                "description": "kutija",
+                "quantity": 2.0,
+                "unit": "kom",
+                "price": 6.0,
+                "total": 12.0
+            },
+            {
+                "description": "gorivo",
+                "quantity": 3.0,
+                "unit": "L",
+                "price": 5.0,
+                "total": 15.0
+            }
+        ],
+        "subtotal": 27.0,
+        "pdv_included": true,
+        "total_with_vat": 33.75
+    },
+    {
+        "invoice_number": "poni",
+        "client": "xxxx",
+        "description": "",
+        "date": "2026-02-04",
+        "items": [
+            {
+                "description": "po",
+                "quantity": 2.0,
+                "unit": "kom",
+                "price": 2.0,
+                "total": 4.0
+            },
+            {
+                "description": "ni",
+                "quantity": 3.0,
+                "unit": "kom",
+                "price": 3.0,
+                "total": 9.0
+            }
+        ],
+        "subtotal": 13.0,
+        "pdv_included": false,
+        "total_with_vat": 16.25
+    },
+    {
+        "invoice_number": "konj",
+        "client": "Antonio",
+        "description": "",
+        "date": "2026-02-04",
+        "items": [
+            {
+                "description": "aaa",
+                "quantity": 4.0,
+                "unit": "kom",
+                "price": 5.0,
+                "total": 20.0
+            },
+            {
+                "description": "nnnn",
+                "quantity": 2.0,
+                "unit": "kom",
+                "price": 2.0,
+                "total": 4.0
+            },
+            {
+                "description": "b",
+                "quantity": 2.0,
+                "unit": "kom",
+                "price": 5.0,
+                "total": 10.0
+            },
+            {
+                "description": "aaaa",
+                "quantity": 2.0,
+                "unit": "kom",
+                "price": 4.0,
+                "total": 8.0
+            }
+        ],
+        "subtotal": 42.0,
+        "pdv_included": false,
+        "total_with_vat": 42.0
+    }
 ]

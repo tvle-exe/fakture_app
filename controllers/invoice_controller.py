@@ -35,11 +35,10 @@ class InvoiceController:
 
     def save_and_export(self):
         invoice = self.dialog.collect_invoice_data()
+        
         if not invoice["invoice_number"]:
-            print("GREŠKA: broj fakture nije unesen!")
-             # Prikaži grešku korisniku
             QMessageBox.warning(
-                self.dialog.dialog,  # parent je glavni dialog
+                self.dialog.dialog,
                 "Greška",
                 "Broj fakture nije unesen!"
             )
@@ -55,6 +54,17 @@ class InvoiceController:
                 except json.JSONDecodeError:
                     data = []
 
+        # ⚠️ Provjera duplikata broja fakture
+        for inv in data:
+            if inv.get("invoice_number") == invoice["invoice_number"]:
+                QMessageBox.warning(
+                    self.dialog.dialog,
+                    "Greška",
+                    f"Faktura s brojem {invoice['invoice_number']} već postoji!"
+                )
+                return  # prekini spremanje
+
+        # kreiraj JSON zapis
         json_invoice = {
             "invoice_number": invoice["invoice_number"],
             "client": invoice["client"],
@@ -77,20 +87,18 @@ class InvoiceController:
 
         data.append(json_invoice)
 
-        # Spremi JSON u root/data
+        # Spremi JSON
         with open(INVOICES_JSON_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-
-        print(f"Faktura #{invoice['invoice_number']} spremljena u JSON za klijenta: {invoice['client']}")
 
         # ================= PDF =================
         export_invoice_pdf(json_invoice)
 
-        # ⚡ obavijest korisniku
         QMessageBox.information(
-            self.dialog.dialog,  # parent je dialog
+            self.dialog.dialog,
             "Uspjeh",
             f"Faktura #{invoice['invoice_number']} je spremljena i PDF je exportan."
         )
 
         self.dialog.close()
+
